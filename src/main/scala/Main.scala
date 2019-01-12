@@ -23,6 +23,7 @@ object Main {
     subjPhyl
   )
 
+  val Q1 = new Question(4, List("Я закончил изучение дисциплины", "Я прошел дисциплину, но еще не сдал зачет/экзамен", "Я учу эту дисциплину"))
   val Q2 = new Question(3, List("На лекции", "На практическом занятии", "На стенде", "На сайте", "От друзей", "Ниоткуда"))
   val Q21 = new Question(2, "Рабочие тетради/методические пособия кафедры" :: "Дополнительные занятия по дисциплине на кафедре" :: "Дополнительные занятия по дисциплине за пределами университета" :: "«Помощь» в подготовке к зачету/экзамену" :: Nil)
   val Q3 = new Question(5, List("Мало времени на изучение дисциплины", "Недостаточное количество лекций", "Мало практических занятий", "Хотелось бы иметь лабораторные работы", "Самостоятельная работа не нужна"))
@@ -48,33 +49,9 @@ object Main {
   val Q23 = new Question(25, List("Полезная", "Скучная", "Интересная", "Не нужная"))
   val Q24 = new Question(26, List("Какие знания данной дисциплины пригодятся в профессии", "Где применить полученные умения на практике"))
   val Q25 = new Question(27, List("Сопровождались инструкциями из методических пособий", "Раздавались с устными методическими указаниями", "Выполнялись без участия преподавателя и оставались без проверки", "Вызывающие затруднения в решении, не разбирались с преподавателем", "Не контролировались преподавателем"))
+  val FUTURE = new Question(28, List())
 
-
-  val allQuestion = List(Q2,
-    Q21,
-    Q3,
-    Q4_1,
-    Q4_2,
-    Q5,
-    Q6,
-    Q7,
-    Q8,
-    Q9,
-    Q10,
-    Q11,
-    Q12,
-    Q13,
-    Q14,
-    Q15,
-    Q16,
-    Q17,
-    Q18,
-    Q19,
-    Q20,
-    Q22,
-    Q23,
-    Q24,
-    Q25)
+  val allQuestion = List(Q1, FUTURE)
 
   def main(args: Array[String]): Unit = {
     val data = Source.fromFile(path).getLines().toStream
@@ -110,7 +87,7 @@ object Main {
         println(s"Count: $amount, $answer")
           amount
       }.sum
-      if (control == 0) {
+      if (question.preparedAnswers.nonEmpty && control == 0) {
         throw new IllegalStateException(s"Fucked up with $qName")
       }
       println("Customs: ")
@@ -119,7 +96,7 @@ object Main {
         .filter(_.nonEmpty)
         .groupBy(str => str)
         .map { case (a, b) => CalculatedAnswer(a, b.length) }
-        .toList.sortBy(-_.amount)
+        .toList.sortBy(it => -it.amount * 10000 - it.response.length)
       println(list.mkString("\n"))
     }
   }
